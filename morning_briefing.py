@@ -19,7 +19,7 @@ logging.basicConfig(
 logger = logging.getLogger("morning_briefing")
 
 FEEDS = {
-    "Politik (Tagesschau)": "https://www.tagesschau.de/xml/rss2/",
+    "Politik (FAZ)": "https://www.faz.net/rss/aktuell/politik/",
     "Allgemein (Spiegel)": "https://www.spiegel.de/schlagzeilen/index.rss",
     "Wirtschaft (Handelsblatt)": "https://www.handelsblatt.com/contentexport/feed/schlagzeilen",
     "Tech & KI (The Verge)": "https://www.theverge.com/rss/index.xml",

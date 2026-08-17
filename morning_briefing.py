@@ -171,34 +171,41 @@ Schreib locker und freundlich, wie ein guter Freund der die News erklärt. Kein 
 def save_to_obsidian(body):
     vault = os.environ["OBSIDIAN_VAULT_PATH"]
     today = date.today().strftime("%Y-%m-%d")
-    filepath = os.path.join(vault, "50 - News Briefing", f"{today}.md")
+    folder = os.path.join(vault, "50 - News Briefing")
+    os.makedirs(folder, exist_ok=True)
+    filepath = os.path.join(folder, f"{today}.md")
     content = f"# Morning Briefing {today}\n\n{body}"
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(content)
     logger.info("Briefing gespeichert: %s", filepath)
 
 
-logger.info("Starte Morning-Briefing")
+def main():
+    logger.info("Starte Morning-Briefing")
 
-weather = fetch_weather()
-news = collect_news()
+    weather = fetch_weather()
+    news = collect_news()
 
-if not news:
-    logger.error("Keine News geladen – breche ab.")
-    raise SystemExit(1)
+    if not news:
+        logger.error("Keine News geladen – breche ab.")
+        raise SystemExit(1)
 
-news_text = build_news_text(news)
+    news_text = build_news_text(news)
 
-try:
-    briefing = summarize(news_text, weather)
-except Exception as exc:
-    logger.error("Zusammenfassung fehlgeschlagen: %s", exc)
-    raise SystemExit(1)
+    try:
+        briefing = summarize(news_text, weather)
+    except Exception as exc:
+        logger.error("Zusammenfassung fehlgeschlagen: %s", exc)
+        raise SystemExit(1)
 
-try:
-    save_to_obsidian(briefing)
-except Exception as exc:
-    logger.error("Obsidian-Speicherung fehlgeschlagen: %s", exc)
-    raise SystemExit(1)
+    try:
+        save_to_obsidian(briefing)
+    except Exception as exc:
+        logger.error("Obsidian-Speicherung fehlgeschlagen: %s", exc)
+        raise SystemExit(1)
 
-logger.info("Morning-Briefing erfolgreich abgeschlossen")
+    logger.info("Morning-Briefing erfolgreich abgeschlossen")
+
+
+if __name__ == "__main__":
+    main()

@@ -26,7 +26,7 @@ FEEDS = {
     "Tech & KI (Heise)": "https://www.heise.de/rss/heise-atom.xml",
 }
 ARTICLES_PER_FEED = 5
-CLAUDE_MODEL = "claude-opus-4-8"
+CLAUDE_MODEL = "claude-haiku-4-5"
 
 
 WMO_CODES = {
@@ -89,6 +89,8 @@ def fetch_feed(name, url):
         for entry in parsed.entries[:ARTICLES_PER_FEED]:
             title = entry.get("title", "").strip()
             summary = entry.get("summary", entry.get("description", "")).strip()
+            if len(summary) > 200:
+                summary = summary[:200].rsplit(" ", 1)[0] + "…"
             articles.append({"title": title, "summary": summary})
         logger.info("  %d Artikel von %s", len(articles), name)
         return articles
@@ -160,7 +162,7 @@ Schreib locker und freundlich, wie ein guter Freund der die News erklärt. Kein 
 
     message = client.messages.create(
         model=CLAUDE_MODEL,
-        max_tokens=2048,
+        max_tokens=1100,
         messages=[{"role": "user", "content": prompt}],
     )
     result = "".join(block.text for block in message.content if block.type == "text")
